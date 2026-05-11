@@ -1,9 +1,21 @@
-import { motion } from 'motion/react';
-import { UserPlus, Calendar, Globe2, Award } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { UserPlus, Calendar, Globe2, Award, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function Volunteer() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 5000);
+    }, 2000);
+  };
 
   return (
     <section id="volunteer" className="py-40 px-6 relative overflow-hidden">
@@ -22,27 +34,65 @@ export default function Volunteer() {
             <form className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="flex flex-col gap-3">
                 <label className="text-[10px] text-beige/30 uppercase tracking-widest font-black">{t.volunteer.name}</label>
-                <input type="text" placeholder="..." className="bg-white/5 border border-gold/10 rounded-xl py-4 px-6 text-beige focus:outline-none focus:border-gold transition-all" />
+                <input 
+                  type="text" 
+                  disabled={isProcessing || isSuccess}
+                  placeholder="..." 
+                  className="bg-white/5 border border-gold/10 rounded-xl py-4 px-6 text-beige focus:outline-none focus:border-gold transition-all disabled:opacity-50" 
+                />
               </div>
               <div className="flex flex-col gap-3">
                 <label className="text-[10px] text-beige/30 uppercase tracking-widest font-black">{t.volunteer.email}</label>
-                <input type="email" placeholder="..." className="bg-white/5 border border-gold/10 rounded-xl py-4 px-6 text-beige focus:outline-none focus:border-gold transition-all" />
+                <input 
+                  type="email" 
+                  disabled={isProcessing || isSuccess}
+                  placeholder="..." 
+                  className="bg-white/5 border border-gold/10 rounded-xl py-4 px-6 text-beige focus:outline-none focus:border-gold transition-all disabled:opacity-50" 
+                />
               </div>
               <div className="flex flex-col gap-3">
                 <label className="text-[10px] text-beige/30 uppercase tracking-widest font-black">{t.volunteer.area}</label>
-                <select className="bg-white/5 border border-gold/10 rounded-xl py-4 px-6 text-beige/30 focus:outline-none focus:border-gold transition-all">
-                  <option>{t.causes.titles.education}</option>
-                  <option>{t.causes.titles.health}</option>
-                  <option>{t.causes.titles.sustainability}</option>
+                <select 
+                  disabled={isProcessing || isSuccess}
+                  className="bg-[#1a120b] border border-gold/10 rounded-xl py-4 px-6 text-beige focus:outline-none focus:border-gold transition-all disabled:opacity-50"
+                >
+                  <option className="bg-[#1a120b] text-beige">{t.causes.titles.education}</option>
+                  <option className="bg-[#1a120b] text-beige">{t.causes.titles.health}</option>
+                  <option className="bg-[#1a120b] text-beige">{t.causes.titles.sustainability}</option>
+                  <option className="bg-[#1a120b] text-beige">{t.causes.titles.hunger}</option>
+                  <option className="bg-[#1a120b] text-beige">{t.causes.titles.women}</option>
                 </select>
               </div>
               <div className="flex flex-col gap-3">
                 <label className="text-[10px] text-beige/30 uppercase tracking-widest font-black">{t.volunteer.location}</label>
-                <input type="text" placeholder="..." className="bg-white/5 border border-gold/10 rounded-xl py-4 px-6 text-beige focus:outline-none focus:border-gold transition-all" />
+                <input 
+                  type="text" 
+                  disabled={isProcessing || isSuccess}
+                  placeholder="..." 
+                  className="bg-white/5 border border-gold/10 rounded-xl py-4 px-6 text-beige focus:outline-none focus:border-gold transition-all disabled:opacity-50" 
+                />
               </div>
               <div className="md:col-span-2">
-                <button type="button" className="w-full py-6 bg-gold text-[#0c0805] rounded-xl font-bold uppercase tracking-[0.3em] hover:bg-saffron transition-all shadow-[0_10px_30px_rgba(212,175,55,0.2)]">
-                  {t.volunteer.submit}
+                <button 
+                  type="button" 
+                  disabled={isProcessing || isSuccess}
+                  onClick={handleSubmit}
+                  className="w-full py-6 bg-gold text-[#0c0805] rounded-xl font-bold uppercase tracking-[0.3em] hover:bg-saffron transition-all shadow-[0_10px_30px_rgba(212,175,55,0.2)] disabled:opacity-70 flex items-center justify-center gap-3"
+                >
+                  {isProcessing ? (
+                     <div className="flex gap-1">
+                       <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-[#0c0805] rounded-full" />
+                       <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-[#0c0805] rounded-full" />
+                       <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-[#0c0805] rounded-full" />
+                     </div>
+                  ) : isSuccess ? (
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5" />
+                      {language === 'HI' ? 'पंजीकरण सफल' : 'Successfully Registered'}
+                    </div>
+                  ) : (
+                    t.volunteer.submit
+                  )}
                 </button>
               </div>
             </form>

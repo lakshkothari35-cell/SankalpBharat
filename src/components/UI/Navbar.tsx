@@ -3,10 +3,12 @@ import { Menu, Search, Globe } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useState } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
+import MobileMenu from './MobileMenu';
 
 export default function Navbar() {
   const { language, setLanguage, t } = useLanguage();
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <>
@@ -59,13 +61,17 @@ export default function Navbar() {
             {t.nav.connect}
           </button>
 
-          <button className="p-2 md:p-3 glass-card rounded-full hover:bg-gold/10 transition-all text-gold">
+          <button 
+            onClick={() => setIsMenuOpen(true)}
+            className="p-2 md:p-3 glass-card rounded-full hover:bg-gold/10 transition-all text-gold pointer-events-auto"
+          >
             <Menu className="w-4 h-4 md:w-5 md:h-5" />
           </button>
         </div>
       </motion.nav>
 
       <LanguageSwitcher isOpen={isLangOpen} onClose={() => setIsLangOpen(false)} />
+      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </>
   );
 }

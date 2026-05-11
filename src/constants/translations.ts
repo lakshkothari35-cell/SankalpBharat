@@ -53,6 +53,13 @@ export interface TranslationSchema {
     paymentPath: string;
     process: string;
     report: string;
+    upiIdLabel: string;
+    cardNumberLabel: string;
+    expiryLabel: string;
+    cvvLabel: string;
+    bankAccountLabel: string;
+    ifscLabel: string;
+    holderNameLabel: string;
   };
   volunteer: {
     title: string;
@@ -120,6 +127,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'Payment Path',
       process: 'Perform Daana',
       report: 'Every Seva is Tracked in Our Living Transparency Ledger',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'Become a ',
@@ -185,6 +199,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'भुगतान पथ',
       process: 'दान करें',
       report: 'हर सेवा हमारे लाइव पारदर्शिता लेजर में ट्रैक की जाती है',
+      upiIdLabel: 'यूपीआई आईडी (जैसे name@upi)',
+      cardNumberLabel: 'कार्ड नंबर',
+      expiryLabel: 'समाप्ति (MM/YY)',
+      cvvLabel: 'सीवीवी',
+      bankAccountLabel: 'खाता संख्या',
+      ifscLabel: 'आईएफएससी कोड',
+      holderNameLabel: 'लाभार्थी का नाम',
     },
     volunteer: {
       title: 'बनें एक ',
@@ -250,6 +271,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'ચુકવણી માર્ગ',
       process: 'દાન કરો',
       report: 'દરેક સેવા આપણા લિવિંગ ટ્રાન્સપરન્સી લેજરમાં ટ્રેક કરવામાં આવે છે',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'બનો એક ',
@@ -315,6 +343,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'கட்டண பாதை',
       process: 'தானம் செய்யுங்கள்',
       report: 'ஒவ்வொரு சேவையும் எங்கள் நேரடி வெளிப்படைத்தன்மை லெட்ஜரில் கண்காணிக்கப்படுகிறது',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'ஒருவராகுங்கள் ',
@@ -380,6 +415,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'ادائیگی کا راستہ',
       process: 'صدقہ دیں',
       report: 'ہر خدمت ہمارے شفاف لیجر میں درج کی جاتی ہے',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'بنیں ایک ',
@@ -445,6 +487,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'भुगतानमार्गः',
       process: 'दानं कुरुत',
       report: 'प्रतिसेवा अस्माकं जीवन्तपारदर्शितालेखायां अङ्किता भवति',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'भवतु एकः ',
@@ -510,6 +559,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'पेमेंट मार्ग',
       process: 'दान करा',
       report: 'प्रत्येक सेवा आमच्या पारदर्शक लेजरमध्ये ट्रॅक केली जाते',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'व्हा एक ',
@@ -575,6 +631,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'পেমেন্ট পাথ',
       process: 'দান করুন',
       report: 'প্রতিটি সেবা আমাদের সরাসরি স্বচ্ছতা লেজারে ট্র্যাক করা হয়',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'হয়ে উঠুন একজন ',
@@ -640,6 +703,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'చెల్లింపు విధానం',
       process: 'దానం చేయండి',
       report: 'ప్రతి సేవ మా పారదర్శకత లెడ్జర్‌లో నమోదు చేయబడుతుంది',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'అవ్వండి ఒక ',
@@ -705,6 +775,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'ಪಾವತಿ ಮಾರ್ಗ',
       process: 'ದಾನ ಮಾಡಿ',
       report: 'ಪ್ರತಿ ಸೇವೆಯು ನಮ್ಮ ಪಾರದರ್ಶಕ ದಾಖಲೆಗಳಲ್ಲಿ ದಾಖಲಾಗುತ್ತದೆ',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'ಆಗಿ ಒಬ್ಬ ',
@@ -770,6 +847,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'പേയ്‌മെന്റ് രീതി',
       process: 'ദാനം ചെയ്യുക',
       report: 'ഓരോ സേവനവും ഞങ്ങളുടെ സുതാര്യത രജിസ്റ്ററിൽ രേഖപ്പെടുത്തുന്നു',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'ആകൂ ഒരു ',
@@ -835,6 +919,13 @@ export const translations: Record<Language, TranslationSchema> = {
       paymentPath: 'ਭੁਗਤਾਨ ਦਾ ਰਸਤਾ',
       process: 'ਦਾਨ ਕਰੋ',
       report: 'ਹਰ ਸੇਵਾ ਸਾਡੇ ਪਾਰਦਰਸ਼ੀ ਲੇਜ਼ਰ ਵਿੱਚ ਟ੍ਰੈਕ ਕੀਤੀ ਜਾਂਦੀ ਹੈ',
+      upiIdLabel: 'UPI ID (e.g. name@upi)',
+      cardNumberLabel: 'Card Number',
+      expiryLabel: 'Expiry (MM/YY)',
+      cvvLabel: 'CVV',
+      bankAccountLabel: 'Account Number',
+      ifscLabel: 'IFSC Code',
+      holderNameLabel: 'Beneficiary Name',
     },
     volunteer: {
       title: 'ਬਣੋ ਇੱਕ ',

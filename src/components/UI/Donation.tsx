@@ -6,7 +6,23 @@ import { useLanguage } from '../../context/LanguageContext';
 export default function Donation() {
   const [amount, setAmount] = useState('500');
   const [method, setMethod] = useState('upi');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const { language, t } = useLanguage();
+
+  const handleDonation = () => {
+    if (!amount || parseFloat(amount) <= 0) return;
+    
+    setIsProcessing(true);
+    // Simulate payment process
+    setTimeout(() => {
+      setIsProcessing(false);
+      setIsSuccess(true);
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => setIsSuccess(false), 5000);
+    }, 2000);
+  };
 
   return (
     <section id="donation" className="py-32 px-6">
@@ -33,8 +49,9 @@ export default function Donation() {
               {['500', '2100', '5100', '11000', '25000', 'Custom'].map((val) => (
                 <button
                   key={val}
+                  disabled={isProcessing || isSuccess}
                   onClick={() => setAmount(val === 'Custom' ? '' : val)}
-                  className={`py-5 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all ${
+                  className={`py-5 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all disabled:opacity-50 ${
                     amount === val || (val === 'Custom' && amount === '')
                       ? 'bg-saffron border-saffron text-[#0c0805] shadow-[0_0_30px_rgba(242,125,38,0.4)]'
                       : 'bg-white/5 border-gold/10 text-beige/50 hover:border-gold/40'
@@ -51,9 +68,10 @@ export default function Donation() {
                  <input 
                    type="number" 
                    value={amount} 
+                   disabled={isProcessing || isSuccess}
                    onChange={(e) => setAmount(e.target.value)}
                    placeholder={t.donation.custom}
-                   className="w-full bg-white/5 border border-gold/20 rounded-2xl py-6 pl-14 pr-8 text-2xl font-serif focus:outline-none focus:border-gold transition-colors text-beige placeholder:text-beige/10"
+                   className="w-full bg-white/5 border border-gold/20 rounded-2xl py-6 pl-14 pr-8 text-2xl font-serif focus:outline-none focus:border-gold transition-colors text-beige placeholder:text-beige/10 disabled:opacity-50"
                  />
                </div>
             </div>
@@ -80,8 +98,130 @@ export default function Donation() {
                ))}
             </div>
 
-            <button className="w-full py-8 bg-gradient-to-r from-maroon to-saffron text-beige rounded-2xl text-xl font-serif uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_15px_50px_rgba(128,0,0,0.4)]">
-              {t.donation.process}
+            <div className="mb-12">
+              <AnimatePresence mode="wait">
+                {method === 'upi' && (
+                  <motion.div
+                    key="upi"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-4"
+                  >
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.upiIdLabel}</label>
+                      <input 
+                        type="text" 
+                        disabled={isProcessing || isSuccess}
+                        placeholder="sankalp@upi"
+                        className="w-full bg-white/5 border border-gold/10 rounded-xl py-4 px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+
+                {method === 'card' && (
+                  <motion.div
+                    key="card"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-4"
+                  >
+                    <div className="flex flex-col gap-2">
+                       <label className="text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.cardNumberLabel}</label>
+                       <input 
+                         type="text" 
+                         disabled={isProcessing || isSuccess}
+                         placeholder="XXXX XXXX XXXX XXXX"
+                         className="w-full bg-white/5 border border-gold/10 rounded-xl py-4 px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50"
+                       />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.expiryLabel}</label>
+                        <input 
+                          type="text" 
+                          disabled={isProcessing || isSuccess}
+                          placeholder="MM/YY"
+                          className="w-full bg-white/5 border border-gold/10 rounded-xl py-4 px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.cvvLabel}</label>
+                        <input 
+                          type="password" 
+                          disabled={isProcessing || isSuccess}
+                          placeholder="***"
+                          className="w-full bg-white/5 border border-gold/10 rounded-xl py-4 px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50"
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {method === 'net' && (
+                  <motion.div
+                    key="bank"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-4"
+                  >
+                    <div className="flex flex-col gap-2">
+                       <label className="text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.bankAccountLabel}</label>
+                       <input 
+                         type="text" 
+                         disabled={isProcessing || isSuccess}
+                         placeholder="XXXXX XXXXX"
+                         className="w-full bg-white/5 border border-gold/10 rounded-xl py-4 px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50"
+                       />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                       <label className="text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.ifscLabel}</label>
+                       <input 
+                         type="text" 
+                         disabled={isProcessing || isSuccess}
+                         placeholder="ABCD0XXXXXX"
+                         className="w-full bg-white/5 border border-gold/10 rounded-xl py-4 px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50"
+                       />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                       <label className="text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.holderNameLabel}</label>
+                       <input 
+                         type="text" 
+                         disabled={isProcessing || isSuccess}
+                         className="w-full bg-white/5 border border-gold/10 rounded-xl py-4 px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50"
+                       />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <button 
+              onClick={handleDonation}
+              disabled={isProcessing || isSuccess}
+              className={`w-full py-8 bg-gradient-to-r from-maroon to-saffron text-beige rounded-2xl text-xl font-serif uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_15px_50px_rgba(128,0,0,0.4)] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-4`}
+            >
+              {isProcessing ? (
+                <div className="flex gap-1">
+                  <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                  <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                  <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                </div>
+              ) : isSuccess ? (
+                <motion.div 
+                  initial={{ scale: 0 }} 
+                  animate={{ scale: 1 }} 
+                  className="flex items-center gap-2"
+                >
+                  <ShieldCheck className="w-6 h-6" />
+                  {language === 'HI' ? 'अभिषेकम सफल' : 'Seva Successful'}
+                </motion.div>
+              ) : (
+                t.donation.process
+              )}
             </button>
             
             <p className="text-center mt-8 text-[9px] text-beige/20 uppercase tracking-[0.3em] font-medium">
