@@ -10,10 +10,12 @@ import Navbar from './components/UI/Navbar';
 import Chatbot from './components/UI/Chatbot';
 import Volunteer from './components/UI/Volunteer';
 import { useLanguage } from './context/LanguageContext';
+import { useTheme } from './context/ThemeContext';
 
 export default function App() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { language, t } = useLanguage();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -129,7 +131,6 @@ export default function App() {
              <a href="#" className="hover:text-saffron transition-colors">Yatras</a>
              <a href="#" className="hover:text-saffron transition-colors">Lekh</a>
              <a href="#" className="hover:text-saffron transition-colors">Varta</a>
-             <a href="#" className="hover:text-saffron transition-colors">Connect</a>
           </div>
           <p className="text-beige/10 text-[9px] uppercase tracking-[0.5em] font-medium leading-loose max-w-sm mx-auto">
             Handcrafted with devotion for a better tomorrow. <br /> © 2026 Sankalp Bharat Foundation.

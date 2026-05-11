@@ -33,7 +33,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 w-full max-w-md h-full bg-[#0c0805] border-l border-gold/10 z-[201] flex flex-col p-8 md:p-12 mandala-pattern"
+            data-lenis-prevent
+            className="fixed top-0 right-0 w-full max-w-md h-full bg-[#0c0805] border-l border-gold/10 z-[201] flex flex-col p-8 md:p-12 mandala-pattern overflow-y-auto"
           >
             <div className="flex justify-between items-center mb-20">
               <div className="flex flex-col">

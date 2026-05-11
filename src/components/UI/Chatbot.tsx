@@ -62,16 +62,20 @@ export default function Chatbot() {
     <>
       {/* Trigger Button */}
       <motion.button
+        drag
+        dragConstraints={{ left: -window.innerWidth + 100, right: 0, top: -window.innerHeight + 100, bottom: 0 }}
+        dragMomentum={false}
+        dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 z-[60] w-16 h-16 bg-maroon rounded-full shadow-[0_10px_40px_rgba(128,0,0,0.5)] flex items-center justify-center text-gold border border-gold/20"
+        className="fixed bottom-8 right-8 z-[60] w-16 h-16 bg-maroon rounded-full shadow-[0_10px_40px_rgba(128,0,0,0.5)] flex items-center justify-center text-gold border border-gold/20 cursor-grab active:cursor-grabbing"
       >
-        <MessageSquare className="w-6 h-6" />
+        <MessageSquare className="w-6 h-6 pointer-events-none" />
         <motion.div
            animate={{ scale: [1, 1.2, 1] }}
            transition={{ repeat: Infinity, duration: 2 }}
-           className="absolute -top-1 -right-1 w-4 h-4 bg-saffron rounded-full border-2 border-[#0c0805]"
+           className="absolute -top-1 -right-1 w-4 h-4 bg-saffron rounded-full border-2 border-[#0c0805] pointer-events-none"
         />
       </motion.button>
 
