@@ -9,6 +9,7 @@ import Donation from './components/UI/Donation';
 import Navbar from './components/UI/Navbar';
 import Chatbot from './components/UI/Chatbot';
 import Volunteer from './components/UI/Volunteer';
+import CustomCursor from './components/UI/CustomCursor';
 import { useLanguage } from './context/LanguageContext';
 import { useTheme } from './context/ThemeContext';
 import { Routes, Route, useLocation, Link } from 'react-router-dom';
@@ -19,7 +20,7 @@ function PublicApp() {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.5, // Slower, more cinematic scroll
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -40,29 +41,43 @@ function PublicApp() {
 
   return (
     <div 
-      className={`relative min-h-screen bg-[#0c0805] text-beige overflow-x-hidden font-sans ${t.dir === 'rtl' ? 'text-right' : 'text-left'}`}
+      className={`relative min-h-screen bg-[#0c0805] text-beige overflow-x-hidden font-sans selection:bg-gold selection:text-maroon ${t.dir === 'rtl' ? 'text-right' : 'text-left'}`}
       dir={t.dir}
     >
+      <CustomCursor />
+
       {/* 3D Canvas Background */}
       <div className="fixed inset-0 z-0">
-        <Canvas gl={{ antialias: true, alpha: true }}>
-          <ScrollControls pages={5} damping={0.2}>
+        <Canvas gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }} dpr={[1, 2]}>
+          <ScrollControls pages={6} damping={0.1}>
             <Scene />
           </ScrollControls>
         </Canvas>
       </div>
 
-      {/* Atmospheric Background Overlay */}
-      <div className="fixed inset-0 z-[1] atmosphere-gradient pointer-events-none opacity-80" />
+      {/* Atmospheric Background Overlays */}
+      <div className="fixed inset-0 z-[1] pointer-events-none">
+        <div className="absolute inset-0 atmosphere-gradient opacity-60" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,#000_150%)]" />
+        <div className="absolute top-0 left-0 w-full h-[30vh] bg-gradient-to-b from-[#0c0805] to-transparent z-20" />
+      </div>
 
       {/* UI Layers */}
-      <div className="relative z-10 space-y-32">
+      <div className="relative z-10">
         <Navbar />
         
-        <main>
+        <main className="space-y-[20vh] md:space-y-[40vh]">
           <Hero />
-          <Causes />
-          <Donation />
+          
+          <div className="backdrop-blur-[2px]">
+            <Causes />
+          </div>
+          
+          <div className="relative">
+            <div className="absolute inset-0 bg-maroon/5 blur-[120px] rounded-full scale-150 -z-10" />
+            <Donation />
+          </div>
+          
           <Volunteer />
           
           {/* About Section - Timeline */}
