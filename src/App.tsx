@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { ScrollControls, Scroll } from '@react-three/drei';
+import { ScrollControls } from '@react-three/drei';
 import Lenis from 'lenis';
 import Scene from './components/Canvas/Scene';
 import Hero from './components/UI/Hero';
@@ -11,11 +11,11 @@ import Chatbot from './components/UI/Chatbot';
 import Volunteer from './components/UI/Volunteer';
 import { useLanguage } from './context/LanguageContext';
 import { useTheme } from './context/ThemeContext';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import AdminApp from './admin/AdminApp';
 
-export default function App() {
-  const scrollRef = useRef<HTMLDivElement>(null);
+function PublicApp() {
   const { language, t } = useLanguage();
-  const { theme } = useTheme();
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -128,6 +128,7 @@ export default function App() {
           <div className="text-[10px] tracking-[0.4em] text-saffron font-black uppercase mb-12">Seva Parmo Dharma</div>
           
           <div className="flex justify-center gap-12 mb-16 text-beige/30 text-[10px] tracking-[0.3em] uppercase font-black">
+             <a href="/admin" className="hover:text-gold transition-colors font-light">Admin</a>
              <a href="#" className="hover:text-saffron transition-colors">Yatras</a>
              <a href="#" className="hover:text-saffron transition-colors">Lekh</a>
              <a href="#" className="hover:text-saffron transition-colors">Varta</a>
@@ -140,5 +141,17 @@ export default function App() {
 
       <Chatbot />
     </div>
+  );
+}
+
+export default function App() {
+  const location = useLocation();
+
+  return (
+    <Routes>
+      <Route path="/admin/*" element={<AdminApp />} />
+      <Route path="/" element={<PublicApp />} />
+      <Route path="*" element={<PublicApp />} />
+    </Routes>
   );
 }
