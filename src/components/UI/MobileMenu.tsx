@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ArrowRight, Github, Twitter, Instagram } from 'lucide-react';
+import { X, ArrowRight, Github, Twitter, Instagram, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { Link } from 'react-router-dom';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -11,10 +12,10 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const { t } = useLanguage();
 
   const menuItems = [
-    { label: t.nav.vision, href: '#about' },
-    { label: t.nav.causes, href: '#causes' },
-    { label: t.nav.donation, href: '#donation' },
-    { label: t.nav.connect, href: '#volunteer' },
+    { label: t.nav.vision, href: '#about', type: 'anchor' },
+    { label: t.nav.causes, href: '#causes', type: 'anchor' },
+    { label: t.nav.donation, href: '#donation', type: 'anchor' },
+    { label: t.nav.connect, href: '#volunteer', type: 'anchor' },
   ];
 
   return (
@@ -36,7 +37,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             data-lenis-prevent
             className="fixed top-0 right-0 w-full max-w-md h-full bg-[#0c0805] border-l border-gold/10 z-[201] flex flex-col p-8 md:p-12 mandala-pattern overflow-y-auto"
           >
-            <div className="flex justify-between items-center mb-20">
+            <div className="flex justify-between items-center mb-10">
               <div className="flex flex-col">
                 <div className="text-xl font-serif font-bold tracking-widest uppercase leading-none text-beige">
                   Sankalp <span className="text-saffron">Bharat</span>
@@ -51,7 +52,24 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </button>
             </div>
 
-            <nav className="flex-1 flex flex-col gap-8">
+            <div className="mb-12">
+               <Link 
+                  to="/admin" 
+                  onClick={onClose}
+                  className="flex items-center gap-4 p-5 bg-gold/5 border border-gold/10 rounded-2xl group hover:bg-gold/10 transition-all"
+               >
+                  <div className="w-10 h-10 bg-maroon rounded-xl flex items-center justify-center border border-gold/30">
+                     <ShieldCheck className="w-5 h-5 text-gold" />
+                  </div>
+                  <div>
+                     <div className="text-[10px] uppercase tracking-[0.2em] font-black text-gold/60">Restricted Access</div>
+                     <div className="text-sm font-serif text-beige group-hover:text-gold transition-colors italic">Admin Control Panel</div>
+                  </div>
+                  <ArrowRight className="ml-auto w-5 h-5 text-gold opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+               </Link>
+            </div>
+
+            <nav className="flex-1 flex flex-col gap-4">
               {menuItems.map((item, i) => (
                 <motion.a
                   key={item.label}
@@ -62,7 +80,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   transition={{ delay: i * 0.1 }}
                   className="group flex items-center justify-between py-4 border-b border-gold/5"
                 >
-                  <span className="text-3xl md:text-4xl font-serif text-beige group-hover:text-gold transition-colors italic">
+                  <span className="text-3xl font-serif text-beige group-hover:text-gold transition-colors italic">
                     {item.label}
                   </span>
                   <ArrowRight className="w-6 h-6 text-gold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
