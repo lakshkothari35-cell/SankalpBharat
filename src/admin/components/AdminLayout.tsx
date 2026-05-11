@@ -201,7 +201,7 @@ const AdminLayout: React.FC = () => {
                         <X className="w-6 h-6 text-beige/40" />
                      </button>
                   </div>
-                  <nav className="flex-1 space-y-4">
+                  <nav className="flex-1 space-y-4 overflow-y-auto">
                      {menuItems.map((item) => (
                         <Link 
                            key={item.path} 
@@ -214,6 +214,26 @@ const AdminLayout: React.FC = () => {
                         </Link>
                      ))}
                   </nav>
+
+                  <div className="pt-6 border-t border-white/5 space-y-4">
+                    <div className="flex items-center gap-4 px-4 py-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold/20 to-maroon/20 border border-white/10 flex items-center justify-center text-gold font-black uppercase shadow-lg">
+                        {user?.name.charAt(0)}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-beige">{user?.name}</span>
+                        <span className="text-[10px] text-gold font-bold uppercase tracking-wider mt-0.5">{user?.role.replace('_', ' ')}</span>
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-4 px-4 py-4 w-full text-red-500/80 bg-red-500/5 hover:bg-red-500/10 rounded-2xl transition-all font-bold uppercase tracking-widest text-[10px]"
+                    >
+                      <LogOut className="w-5 h-5 shrink-0" />
+                      <span>Log out of portal</span>
+                    </button>
+                  </div>
                </div>
             </motion.div>
           </>
