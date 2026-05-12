@@ -21,7 +21,7 @@ import {
   Home
 } from 'lucide-react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
-import { useAdminAuth } from '../context/AdminAuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface SidebarItemProps {
   icon: any;
@@ -137,7 +137,7 @@ const AdminLayout: React.FC = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout, user } = useAdminAuth();
+  const { logout, profile: user } = useAuth();
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
@@ -151,9 +151,9 @@ const AdminLayout: React.FC = () => {
     { icon: Settings, label: 'Website Control', path: '/admin/settings' },
   ];
 
-  const handleLogout = () => {
-    logout();
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
   };
 
   return (

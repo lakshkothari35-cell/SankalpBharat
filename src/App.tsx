@@ -11,8 +11,29 @@ import Chatbot from './components/UI/Chatbot';
 import Volunteer from './components/UI/Volunteer';
 import { useLanguage } from './context/LanguageContext';
 import { useTheme } from './context/ThemeContext';
-import { Routes, Route, useLocation, Link } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
 import AdminApp from './admin/AdminApp';
+import AuthPage from './pages/AuthPage';
+import Dashboard from './pages/Dashboard';
+
+function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
+  const { user, profile, loading } = useAuth();
+  
+  if (loading) return (
+    <div className="min-h-screen bg-[#0c0805] flex items-center justify-center font-serif text-gold tracking-widest uppercase">
+      Connecting to Seva...
+    </div>
+  );
+  
+  if (!user) return <Navigate to="/auth" />;
+  
+  if (role && profile?.role !== role && profile?.role !== 'admin') {
+    return <Navigate to="/" />;
+  }
+  
+  return <>{children}</>;
+}
 
 function PublicApp() {
   const { language, t } = useLanguage();
@@ -161,10 +182,21 @@ export default function App() {
   const location = useLocation();
 
   return (
-    <Routes>
-      <Route path="/admin/*" element={<AdminApp />} />
-      <Route path="/" element={<PublicApp />} />
-      <Route path="*" element={<PublicApp />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/admin/*" element={
+          <ProtectedRoute role="admin">
+            <AdminApp />
+          </ProtectedRoute>
+        } />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/dashboard/donor" element={<ProtectedRoute role="donor"><Dashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/volunteer" element={<ProtectedRoute role="volunteer"><Dashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/staff" element={<ProtectedRoute role="staff"><Dashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/manager" element={<ProtectedRoute role="manager"><Dashboard /></ProtectedRoute>} />
+        <Route path="/" element={<PublicApp />} />
+        <Route path="*" element={<PublicApp />} />
+      </Routes>
+    </AuthProvider>
   );
 }

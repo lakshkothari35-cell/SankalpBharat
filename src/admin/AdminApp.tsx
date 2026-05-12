@@ -9,14 +9,22 @@ import DonationManagement from './pages/DonationManagement';
 import CampaignManagement from './pages/CampaignManagement';
 import VolunteerManagement from './pages/VolunteerManagement';
 import CMSManagement from './pages/CMSManagement';
-import { useAdminAuth } from './context/AdminAuthContext';
+import { useAuth } from '../context/AuthContext';
 
-// Protected Route Component
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAdminAuth();
+// Protected Admin Route Component
+const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { profile, loading } = useAuth();
   
-  if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-[#060403]">
+        <div className="w-12 h-12 border-2 border-gold/20 border-t-gold rounded-full animate-spin" />
+      </div>
+    );
+  }
+  
+  if (!profile || profile.role !== 'admin') {
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
@@ -25,14 +33,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const AdminApp: React.FC = () => {
   return (
     <Routes>
-      <Route path="login" element={<Login />} />
-      
-      {/* All admin sub-routes wrapped in Layout and ProtectedRoute using the standard nested pattern */}
+      {/* Sub-routes wrapped in Layout and ProtectedRoute */}
       <Route
         element={
-          <ProtectedRoute>
+          <ProtectedAdminRoute>
             <AdminLayout />
-          </ProtectedRoute>
+          </ProtectedAdminRoute>
         }
       >
         <Route index element={<Dashboard />} />

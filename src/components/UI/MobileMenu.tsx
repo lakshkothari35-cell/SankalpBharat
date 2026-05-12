@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ArrowRight, Github, Twitter, Instagram, ShieldCheck } from 'lucide-react';
+import { X, ArrowRight, Github, Twitter, Instagram, ShieldCheck, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -10,6 +11,14 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const { t } = useLanguage();
+  const { user, profile, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    onClose();
+    navigate('/');
+  };
 
   const menuItems = [
     { label: t.nav.vision, href: '#about', type: 'anchor' },
@@ -53,20 +62,52 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </div>
 
             <div className="mb-12">
-               <Link 
-                  to="/admin" 
-                  onClick={onClose}
-                  className="flex items-center gap-4 p-5 bg-gold/5 border border-gold/10 rounded-2xl group hover:bg-gold/10 transition-all"
-               >
-                  <div className="w-10 h-10 bg-maroon rounded-xl flex items-center justify-center border border-gold/30">
-                     <ShieldCheck className="w-5 h-5 text-gold" />
-                  </div>
-                  <div>
-                     <div className="text-[10px] uppercase tracking-[0.2em] font-black text-gold/60">Restricted Access</div>
-                     <div className="text-sm font-serif text-beige group-hover:text-gold transition-colors italic">Admin Control Panel</div>
-                  </div>
-                  <ArrowRight className="ml-auto w-5 h-5 text-gold opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-               </Link>
+               {!user ? (
+                 <Link 
+                   to="/auth" 
+                   onClick={onClose}
+                   className="flex items-center gap-4 p-5 bg-gold border border-gold/20 rounded-2xl group transition-all"
+                 >
+                   <div className="w-10 h-10 bg-maroon rounded-xl flex items-center justify-center border border-gold/30">
+                      <User className="w-5 h-5 text-gold" />
+                   </div>
+                   <div>
+                      <div className="text-[10px] uppercase tracking-[0.2em] font-black text-[#0c0805]/60">Member Access</div>
+                      <div className="text-sm font-serif text-[#0c0805] group-hover:scale-105 transition-transform italic font-bold">Join the Movement</div>
+                   </div>
+                   <ArrowRight className="ml-auto w-5 h-5 text-[#0c0805]" />
+                 </Link>
+               ) : (
+                 <div className="space-y-4">
+                   <div className="flex items-center gap-4 p-5 bg-gold/5 border border-gold/10 rounded-2xl group">
+                      <div className="w-12 h-12 bg-gold/20 rounded-xl flex items-center justify-center border border-gold/30 text-gold font-black text-xl">
+                         {profile?.name?.charAt(0) || user.email?.charAt(0)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                         <div className="text-xs font-bold text-beige truncate">{profile?.name || 'Human Being'}</div>
+                         <div className="text-[10px] uppercase tracking-[0.2em] font-black text-gold mt-1">{profile?.role || 'Donor'}</div>
+                      </div>
+                   </div>
+                   
+                   <div className="grid grid-cols-2 gap-3">
+                     <Link 
+                       to={profile?.role === 'admin' ? '/admin' : `/dashboard/${profile?.role || 'donor'}`}
+                       onClick={onClose}
+                       className="flex items-center justify-center gap-2 p-4 bg-white/5 border border-white/10 rounded-xl text-gold text-[10px] uppercase tracking-widest font-black hover:bg-gold/10 transition-all font-sans"
+                     >
+                       <LayoutDashboard className="w-4 h-4" />
+                       Dashboard
+                     </Link>
+                     <button 
+                       onClick={handleLogout}
+                       className="flex items-center justify-center gap-2 p-4 bg-red-500/5 border border-red-500/10 rounded-xl text-red-500 text-[10px] uppercase tracking-widest font-black hover:bg-red-500/10 transition-all font-sans"
+                     >
+                       <LogOut className="w-4 h-4" />
+                       Sign Out
+                     </button>
+                   </div>
+                 </div>
+               )}
             </div>
 
             <nav className="flex-1 flex flex-col gap-4">

@@ -1,13 +1,15 @@
 import { motion } from 'motion/react';
-import { Menu, Search, Globe, Settings } from 'lucide-react';
+import { Menu, Globe, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { useState, useEffect } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import MobileMenu from './MobileMenu';
 import ThemeCustomizer from './ThemeCustomizer';
+import UserMenu from './UserMenu';
 
 export default function Navbar() {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, t } = useLanguage();
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isThemeOpen, setIsThemeOpen] = useState(false);
@@ -32,7 +34,7 @@ export default function Navbar() {
         className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-50 px-6 py-4 flex items-center justify-between pointer-events-none holographic-panel rounded-[32px]"
       >
         <div className="flex items-center gap-4 md:gap-12 pointer-events-auto">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 md:w-12 md:h-12 border border-gold/30 bg-maroon/20 rounded-2xl flex items-center justify-center relative overflow-hidden group transition-all hover:bg-maroon/40 shadow-[0_0_20px_rgba(128,0,0,0.3)]">
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-maroon/40" />
               <span className="text-[10px] md:text-xs font-serif font-bold text-gold relative z-10 group-hover:scale-110 transition-transform">सेवा</span>
@@ -43,7 +45,7 @@ export default function Navbar() {
               </div>
               <span className="text-[6px] md:text-[8px] tracking-[0.4em] uppercase text-gold font-black mt-1 opacity-60">Seva Parmo Dharma</span>
             </div>
-          </div>
+          </Link>
           
           <div className="hidden lg:flex gap-12 ml-6">
             <a href="#about" className="text-[10px] uppercase tracking-[0.4em] text-beige/40 hover:text-gold transition-all relative group font-black">
@@ -62,6 +64,10 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3 md:gap-4 pointer-events-auto">
+          <div className="hidden md:block">
+            <UserMenu />
+          </div>
+
           <button 
             onClick={() => setIsLangOpen(true)}
             className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-gold/20 rounded-xl text-gold hover:bg-gold/10 transition-all group shadow-[0_0_15px_rgba(212,175,55,0.1)]"

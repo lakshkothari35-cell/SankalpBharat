@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CreditCard, Smartphone, Banknote, ShieldCheck } from 'lucide-react';
+import { CreditCard, Smartphone, Banknote, ShieldCheck, Heart, ArrowRight, Lock } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { collection, addDoc } from 'firebase/firestore';
+import { db, auth } from '../../lib/firebase';
+import { handleFirestoreError, OperationType } from '../../lib/firestore-errors';
 
 export default function Donation() {
   const [amount, setAmount] = useState('500');
@@ -9,19 +14,34 @@ export default function Donation() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { language, t } = useLanguage();
+  const { user } = useAuth();
 
-  const handleDonation = () => {
-    if (!amount || parseFloat(amount) <= 0) return;
+  const handleDonation = async () => {
+    if (!amount || parseFloat(amount) <= 0 || !user) return;
     
     setIsProcessing(true);
-    // Simulate payment process
-    setTimeout(() => {
+    try {
+      // Save donation to Firestore
+      const donationData = {
+        donorId: user.uid,
+        donorName: user.displayName || 'Anonymous',
+        amount: parseFloat(amount),
+        method,
+        status: 'completed',
+        timestamp: new Date().toISOString()
+      };
+      
+      await addDoc(collection(db, 'donations'), donationData);
+      
       setIsProcessing(false);
       setIsSuccess(true);
       
       // Reset success message after 5 seconds
       setTimeout(() => setIsSuccess(false), 5000);
-    }, 2000);
+    } catch (err) {
+      setIsProcessing(false);
+      handleFirestoreError(err, OperationType.CREATE, 'donations', auth);
+    }
   };
 
   return (
@@ -41,7 +61,7 @@ export default function Donation() {
           </div>
         </div>
 
-        <div className="p-5 md:p-12 bg-maroon/10 border border-gold/20 rounded-[32px] md:rounded-[40px] shadow-2xl overflow-hidden backdrop-blur-3xl relative">
+        <div className="p-5 md:p-12 bg-maroon/10 border border-gold/20 rounded-[32px] md:rounded-[40px] shadow-2xl overflow-hidden backdrop-blur-3xl relative min-h-[500px] flex flex-col justify-center">
           <div className="relative z-10">
             <h3 className="text-base md:text-xl font-serif uppercase tracking-widest mb-8 md:mb-10 text-gold text-center">{t.donation.choose}</h3>
             
@@ -182,30 +202,40 @@ export default function Donation() {
               </AnimatePresence>
             </div>
 
-            <button 
-              onClick={handleDonation}
-              disabled={isProcessing || isSuccess}
-              className={`w-full py-6 md:py-8 bg-gradient-to-r from-maroon to-saffron text-beige rounded-xl md:rounded-2xl text-lg md:text-xl font-serif uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_40px_rgba(128,0,0,0.3)] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-4`}
-            >
-              {isProcessing ? (
-                <div className="flex gap-1">
-                  <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
-                  <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
-                  <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
-                </div>
-              ) : isSuccess ? (
-                <motion.div 
-                  initial={{ scale: 0 }} 
-                  animate={{ scale: 1 }} 
-                  className="flex items-center gap-2"
-                >
-                  <ShieldCheck className="w-6 h-6" />
-                  {language === 'HI' ? 'सफल योगदान' : 'Seva Successful'}
-                </motion.div>
-              ) : (
-                t.donation.process
-              )}
-            </button>
+            {!user ? (
+               <Link 
+                 to="/auth"
+                 className="w-full py-6 md:py-8 bg-gold text-maroon rounded-xl md:rounded-2xl text-base md:text-lg font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 group"
+               >
+                 Login to {t.donation.process}
+                 <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+               </Link>
+            ) : (
+              <button 
+                onClick={handleDonation}
+                disabled={isProcessing || isSuccess}
+                className={`w-full py-6 md:py-8 bg-gradient-to-r from-maroon to-saffron text-beige rounded-xl md:rounded-2xl text-lg md:text-xl font-serif uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_40px_rgba(128,0,0,0.3)] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-4`}
+              >
+                {isProcessing ? (
+                  <div className="flex gap-1">
+                    <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                    <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                    <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                  </div>
+                ) : isSuccess ? (
+                  <motion.div 
+                    initial={{ scale: 0 }} 
+                    animate={{ scale: 1 }} 
+                    className="flex items-center gap-2"
+                  >
+                    <ShieldCheck className="w-6 h-6" />
+                    {language === 'HI' ? 'सफल योगदान' : 'Seva Successful'}
+                  </motion.div>
+                ) : (
+                  t.donation.process
+                )}
+              </button>
+            )}
             
             <p className="text-center mt-6 md:mt-8 text-[8px] md:text-[9px] text-beige/20 uppercase tracking-[0.3em] font-medium leading-relaxed">
               {t.donation.report}
