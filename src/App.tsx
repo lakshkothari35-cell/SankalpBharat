@@ -9,7 +9,6 @@ import Donation from './components/UI/Donation';
 import Navbar from './components/UI/Navbar';
 import Chatbot from './components/UI/Chatbot';
 import Volunteer from './components/UI/Volunteer';
-import CustomCursor from './components/UI/CustomCursor';
 import { useLanguage } from './context/LanguageContext';
 import { useTheme } from './context/ThemeContext';
 import { Routes, Route, useLocation, Link } from 'react-router-dom';
@@ -44,7 +43,6 @@ function PublicApp() {
       className={`relative min-h-screen bg-[#0c0805] text-beige overflow-x-hidden font-sans selection:bg-gold selection:text-maroon ${t.dir === 'rtl' ? 'text-right' : 'text-left'}`}
       dir={t.dir}
     >
-      <CustomCursor />
 
       {/* 3D Canvas Background */}
       <div className="fixed inset-0 z-0">

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Text, RoundedBox, Float } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -13,6 +13,8 @@ interface HolographicCardProps {
 export default function HolographicCard({ position, title, description, color }: HolographicCardProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
+  const { viewport } = useThree();
+  const scale = viewport.width < 10 ? 0.8 : 1;
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -31,7 +33,7 @@ export default function HolographicCard({ position, title, description, color }:
 
   return (
     <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-      <group position={position}>
+      <group position={position} scale={[scale, scale, scale]}>
         <RoundedBox
           ref={meshRef}
           args={[3, 4, 0.1]}

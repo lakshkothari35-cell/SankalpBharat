@@ -71,7 +71,7 @@ export default function Causes() {
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
             whileHover={{ y: -8 }}
-            className="glass-card p-12 flex flex-col justify-between group transition-all relative overflow-hidden mandala-pattern"
+            className="glass-card p-8 md:p-12 flex flex-col justify-between group transition-all relative overflow-hidden mandala-pattern"
           >
             <div className="relative z-10">
               <div className="w-20 h-20 rounded-full bg-maroon/20 border border-gold/20 flex items-center justify-center mb-10 group-hover:bg-maroon/40 transition-all duration-500 shadow-inner">

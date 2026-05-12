@@ -156,22 +156,18 @@ export default function Scene() {
   useFrame((state) => {
     if (groupRef.current) {
       const offset = scroll.offset;
+      const isMobile = state.size.width < 768;
       
       // Dynamic Camera Path
-      // Phase 1 (0-0.2): Earth Focus
-      // Phase 2 (0.2-0.4): Zoom into India
-      // Phase 3 (0.4-0.6): Cause Cards Reveal
-      // Phase 4 (0.6-0.8): Donation Hologram
-      
       if (offset < 0.2) {
-        camera.position.z = THREE.MathUtils.lerp(camera.position.z, 10, 0.05);
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, isMobile ? 12 : 10, 0.05);
         camera.position.y = THREE.MathUtils.lerp(camera.position.y, 0, 0.05);
       } else if (offset < 0.4) {
-        camera.position.z = THREE.MathUtils.lerp(camera.position.z, 5, 0.05);
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, isMobile ? 8 : 5, 0.05);
         camera.position.y = THREE.MathUtils.lerp(camera.position.y, -10, 0.05);
         camera.lookAt(0, -10, 0);
       } else {
-        camera.position.z = THREE.MathUtils.lerp(camera.position.z, 20, 0.05);
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, isMobile ? 25 : 20, 0.05);
         camera.position.y = THREE.MathUtils.lerp(camera.position.y, -30, 0.05);
       }
 
