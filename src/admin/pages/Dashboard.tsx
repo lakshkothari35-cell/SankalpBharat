@@ -70,6 +70,28 @@ const StatCard = ({ label, value, trend, trendValue, icon: Icon, color }: any) =
 );
 
 const Dashboard: React.FC = () => {
+  const handleExport = () => {
+    // Generate simple CSV for the dashboard stats
+    const rows = [
+      ['Metric', 'Value', 'Trend'],
+      ['Total Revenue', '₹14.2M', '12.5%'],
+      ['Active Volunteers', '4,821', '8.2%'],
+      ['Campaign Success', '89%', '-2.1%'],
+      ['Recent Donations', '152', '24.5%'],
+    ];
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + rows.map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `sankalp_bharat_report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -78,11 +100,11 @@ const Dashboard: React.FC = () => {
           <p className="text-beige/40 text-xs font-medium uppercase tracking-[0.2em]">Monitoring NGO performance & engagement</p>
         </div>
         <div className="flex gap-4">
-          <button className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-gold/30 transition-all">
+          <button 
+            onClick={handleExport}
+            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-gold/30 transition-all cursor-pointer"
+          >
             Export Report
-          </button>
-          <button className="px-6 py-3 bg-maroon text-gold rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-maroon/20 hover:-translate-y-1 transition-all">
-            Create Campaign
           </button>
         </div>
       </div>

@@ -3,7 +3,6 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './components/AdminLayout';
 import Dashboard from './pages/Dashboard';
-import Login from './pages/Login';
 import UserManagement from './pages/UserManagement';
 import DonationManagement from './pages/DonationManagement';
 import CampaignManagement from './pages/CampaignManagement';

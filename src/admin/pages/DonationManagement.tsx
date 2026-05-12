@@ -37,6 +37,31 @@ const mockDonations: DonationRecord[] = [
 const DonationManagement: React.FC = () => {
   const [donations] = useState<DonationRecord[]>(mockDonations);
 
+  const handleExport = () => {
+    // Generate CSV from donations
+    const headers = ['ID', 'Donor Name', 'Amount', 'Campaign', 'Date', 'Status', 'Method'];
+    const rows = donations.map(d => [
+      d.id,
+      d.donorName,
+      d.amount,
+      d.campaign,
+      d.date,
+      d.status,
+      d.method
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers, ...rows].map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `sankalp_bharat_donations_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -45,7 +70,10 @@ const DonationManagement: React.FC = () => {
           <p className="text-beige/40 text-xs font-medium uppercase tracking-[0.2em]">Comprehensive transaction registry & finance controls</p>
         </div>
         <div className="flex gap-4">
-           <button className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-gold/20 transition-all">
+           <button 
+             onClick={handleExport}
+             className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-gold/20 transition-all cursor-pointer"
+           >
               <Download className="w-4 h-4" />
               Audit Report
            </button>

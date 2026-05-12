@@ -35,6 +35,23 @@
         "timestamp": { "type": "string", "format": "date-time" },
         "campaignId": { "type": "string" }
       }
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "Represents a fundraising campaign.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "goal": { "type": "number" },
+        "raised": { "type": "number" },
+        "status": { "type": "string", "enum": ["Active", "Draft", "Ended"] },
+        "image": { "type": "string" },
+        "category": { "type": "string" },
+        "donorsCount": { "type": "number" },
+        "daysLeft": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "goal", "status"]
     }
   },
   "firestore": {
@@ -45,6 +62,10 @@
     "/donations/{donationId}": {
       "schema": "Donation",
       "description": "Collection of all donations."
+    },
+    "/campaigns/{campaignId}": {
+      "schema": "Campaign",
+      "description": "Collection of all fundraising campaigns."
     }
   }
 }

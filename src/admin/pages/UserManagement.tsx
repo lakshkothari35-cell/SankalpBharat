@@ -46,6 +46,30 @@ const UserManagement: React.FC = () => {
     (selectedRole === 'All' || u.role === selectedRole)
   );
 
+  const handleExport = () => {
+    // Generate CSV from filtered users
+    const headers = ['Identity (Name)', 'Email', 'Role', 'Status', 'Last Active', 'Total Donation'];
+    const rows = filteredUsers.map(u => [
+      u.name,
+      u.email,
+      u.role,
+      u.status,
+      u.lastActive,
+      u.totalDonation || 0
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers, ...rows].map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `sankalp_bharat_users_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -54,7 +78,10 @@ const UserManagement: React.FC = () => {
           <p className="text-beige/40 text-[10px] uppercase tracking-widest font-black">Management of Donors, Volunteers & Staff</p>
         </div>
         <div className="flex gap-4">
-          <button className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-gold/20 transition-all">
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-gold/20 transition-all cursor-pointer"
+          >
             <Download className="w-4 h-4" />
             Export CSV
           </button>

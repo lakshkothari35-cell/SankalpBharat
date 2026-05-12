@@ -39,6 +39,33 @@ const mockVolunteers: Volunteer[] = [
 const VolunteerManagement: React.FC = () => {
   const [volunteers] = useState<Volunteer[]>(mockVolunteers);
 
+  const handleExport = () => {
+    // Generate CSV from volunteers
+    const headers = ['ID', 'Name', 'Email', 'Phone', 'Location', 'Skills', 'Status', 'Hours', 'Applied Date'];
+    const rows = volunteers.map(v => [
+      v.id,
+      v.name,
+      v.email,
+      v.phone,
+      v.location,
+      `"${v.skills.join(', ')}"`,
+      v.status,
+      v.hours,
+      v.appliedDate
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers, ...rows].map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `sankalp_bharat_volunteers_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -47,6 +74,12 @@ const VolunteerManagement: React.FC = () => {
           <p className="text-beige/40 text-[10px] uppercase tracking-[0.2em] font-black mt-2">Managing the heartbeat of our organization</p>
         </div>
         <div className="flex gap-4">
+           <button 
+             onClick={handleExport}
+             className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-gold/20 transition-all cursor-pointer"
+           >
+              Audit Report
+           </button>
            <div className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl">
               <Globe2 className="w-4 h-4 text-gold" />
               <div className="text-right">

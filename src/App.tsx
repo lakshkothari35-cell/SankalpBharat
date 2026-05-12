@@ -82,10 +82,10 @@ function PublicApp() {
       </div>
 
       {/* UI Layers */}
-      <div className="relative z-10">
+      <div className="relative z-[200]">
         <Navbar />
         
-        <main className="space-y-[20vh] md:space-y-[40vh]">
+        <main className="space-y-[10vh] md:space-y-[40vh]">
           <Hero />
           
           <div className="backdrop-blur-[2px]">
@@ -100,7 +100,7 @@ function PublicApp() {
           <Volunteer />
           
           {/* About Section - Timeline */}
-          <section id="about" className="py-20 md:py-40 px-6 max-w-7xl mx-auto relative">
+          <section id="about" className="py-10 md:py-40 px-6 max-w-7xl mx-auto relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20">
               <div>
                 <span className="text-gold font-serif text-[10px] md:text-sm tracking-[0.4em] uppercase">{language === 'HI' ? 'विरासत - हमारी विरासत' : 'Virasat - Our Legacy'}</span>
@@ -134,7 +134,7 @@ function PublicApp() {
               </div>
             </div>
           </section>
-
+ 
           {/* Impact Stats */}
           <section className="py-20 md:py-32 mandala-pattern border-y border-gold/5 bg-maroon/[0.02]">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
@@ -154,14 +154,14 @@ function PublicApp() {
             </div>
           </section>
         </main>
-
-        <footer className="py-20 md:py-32 px-6 border-t border-gold/5 text-center relative overflow-hidden backdrop-blur-xl">
+ 
+        <footer className="py-20 md:py-32 px-6 border-t border-gold/5 text-center relative z-[400] overflow-hidden backdrop-blur-xl">
           <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
           
           <div className="text-2xl md:text-3xl font-serif text-beige tracking-widest uppercase mb-4">Sankalp <span className="text-gold">Bharat</span></div>
           <div className="text-[10px] tracking-[0.4em] text-saffron font-black uppercase mb-12">Seva Parmo Dharma</div>
           
-          <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-12 md:mb-16 text-beige/30 text-[10px] tracking-[0.3em] uppercase font-black">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-12 md:mb-16 text-beige/30 text-[10px] tracking-[0.3em] uppercase font-black relative z-[500]">
              <Link to="/admin" className="hover:text-gold transition-colors font-light">Admin</Link>
              <a href="#" className="hover:text-saffron transition-colors">Yatras</a>
              <a href="#" className="hover:text-saffron transition-colors">Lekh</a>

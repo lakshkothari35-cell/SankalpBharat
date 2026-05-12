@@ -69,7 +69,7 @@ export default function Chatbot() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 z-[60] w-16 h-16 bg-maroon rounded-full shadow-[0_10px_40px_rgba(128,0,0,0.5)] flex items-center justify-center text-gold border border-gold/20 cursor-grab active:cursor-grabbing"
+        className="fixed bottom-8 right-8 z-[1000] w-16 h-16 bg-maroon rounded-full shadow-[0_10px_40px_rgba(128,0,0,0.5)] flex items-center justify-center text-gold border border-gold/20 cursor-grab active:cursor-grabbing"
       >
         <MessageSquare className="w-6 h-6 pointer-events-none" />
         <motion.div
@@ -85,7 +85,7 @@ export default function Chatbot() {
             initial={{ opacity: 0, scale: 0.8, y: 100 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 100 }}
-            className="fixed bottom-28 right-8 z-[60] w-[90vw] sm:w-[400px] h-[550px] bg-[#0c0805] border border-gold/20 rounded-[32px] shadow-2xl flex flex-col overflow-hidden backdrop-blur-3xl"
+            className="fixed bottom-28 right-8 z-[1000] w-[90vw] sm:w-[400px] h-[550px] bg-[#0c0805] border border-gold/20 rounded-[32px] shadow-2xl flex flex-col overflow-hidden backdrop-blur-3xl"
           >
             {/* Header */}
             <div className="p-8 bg-maroon/20 border-b border-gold/10 flex items-center justify-between">

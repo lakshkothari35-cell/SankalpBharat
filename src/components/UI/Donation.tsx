@@ -1,46 +1,89 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CreditCard, Smartphone, Banknote, ShieldCheck, Heart, ArrowRight, Lock } from 'lucide-react';
+import { CreditCard, Smartphone, Banknote, ShieldCheck, ArrowRight, Loader2, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '../../lib/firebase';
 import { handleFirestoreError, OperationType } from '../../lib/firestore-errors';
+
+interface Campaign {
+  id: string;
+  title: string;
+}
 
 export default function Donation() {
   const [amount, setAmount] = useState('500');
   const [method, setMethod] = useState('upi');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string>('general');
+  const [loadingCampaigns, setLoadingCampaigns] = useState(false);
+  
   const { language, t } = useLanguage();
   const { user } = useAuth();
 
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      setLoadingCampaigns(true);
+      try {
+        const q = query(collection(db, 'campaigns'), where('status', '==', 'Active'));
+        const querySnapshot = await getDocs(q);
+        const campaignsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          title: doc.data().title
+        }));
+        setCampaigns(campaignsData);
+      } catch (err) {
+        console.error('Failed to fetch campaigns for donation:', err);
+      } finally {
+        setLoadingCampaigns(false);
+      }
+    };
+    fetchCampaigns();
+  }, []);
+
   const handleDonation = async () => {
-    if (!amount || parseFloat(amount) <= 0 || !user) return;
+    const parsedAmount = parseFloat(amount);
+    if (!amount || isNaN(parsedAmount) || parsedAmount <= 0 || !user) {
+      setError(language === 'HI' ? 'मान्य राशि दर्ज करें' : 'Please enter a valid amount');
+      return;
+    }
     
     setIsProcessing(true);
+    setError(null);
+    
     try {
       // Save donation to Firestore
       const donationData = {
         donorId: user.uid,
         donorName: user.displayName || 'Anonymous',
-        amount: parseFloat(amount),
+        amount: parsedAmount,
         method,
         status: 'completed',
+        campaignId: selectedCampaignId,
         timestamp: new Date().toISOString()
       };
       
       await addDoc(collection(db, 'donations'), donationData);
       
-      setIsProcessing(false);
       setIsSuccess(true);
-      
       // Reset success message after 5 seconds
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err) {
+      console.error('Donation failed:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
+      try {
+        handleFirestoreError(err, OperationType.CREATE, 'donations', auth);
+      } catch (e) {
+        // Logged and handled
+      }
+    } finally {
       setIsProcessing(false);
-      handleFirestoreError(err, OperationType.CREATE, 'donations', auth);
     }
   };
 
@@ -65,12 +108,41 @@ export default function Donation() {
           <div className="relative z-10">
             <h3 className="text-base md:text-xl font-serif uppercase tracking-widest mb-8 md:mb-10 text-gold text-center">{t.donation.choose}</h3>
             
+            {/* Campaign Selection */}
+            <div className="mb-8">
+               <label className="block text-[9px] md:text-[10px] uppercase tracking-[0.3em] mb-4 text-gold/60 text-center font-black">
+                 {language === 'HI' ? 'अभियान चुनें' : 'Support a Campaign'}
+               </label>
+               <div className="relative group">
+                 <select 
+                   value={selectedCampaignId}
+                   onChange={(e) => setSelectedCampaignId(e.target.value)}
+                   className="w-full bg-white/5 border border-gold/20 rounded-2xl py-4 px-6 text-beige text-xs font-bold uppercase tracking-widest focus:outline-none focus:border-gold transition-colors appearance-none cursor-pointer"
+                 >
+                   <option value="general">{language === 'HI' ? 'सामान्य कोष' : 'General Fund - Where needed most'}</option>
+                   {campaigns.map(camp => (
+                     <option key={camp.id} value={camp.id}>{camp.title}</option>
+                   ))}
+                 </select>
+                 <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gold pointer-events-none group-hover:translate-y-[-40%] transition-transform" />
+               </div>
+               {loadingCampaigns && (
+                 <div className="flex items-center justify-center mt-2 gap-2">
+                   <Loader2 className="w-3 h-3 text-gold animate-spin" />
+                   <span className="text-[8px] text-beige/20 uppercase tracking-widest">Finding active campaigns...</span>
+                 </div>
+               )}
+            </div>
+
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-12">
               {['500', '2100', '5100', '11000', '25000', 'Custom'].map((val) => (
                 <button
                   key={val}
                   disabled={isProcessing || isSuccess}
-                  onClick={() => setAmount(val === 'Custom' ? '' : val)}
+                  onClick={() => {
+                    setAmount(val === 'Custom' ? '' : val);
+                    setError(null);
+                  }}
                   className={`py-4 md:py-5 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest border transition-all disabled:opacity-50 ${
                     amount === val || (val === 'Custom' && amount === '')
                       ? 'bg-saffron border-saffron text-[#0c0805] shadow-[0_0_20px_rgba(242,125,38,0.3)]'
@@ -89,11 +161,23 @@ export default function Donation() {
                    type="number" 
                    value={amount} 
                    disabled={isProcessing || isSuccess}
-                   onChange={(e) => setAmount(e.target.value)}
+                   onChange={(e) => {
+                     setAmount(e.target.value);
+                     setError(null);
+                   }}
                    placeholder={t.donation.custom}
                    className="w-full bg-white/5 border border-gold/20 rounded-xl md:rounded-2xl py-4 md:py-6 pl-12 md:pl-14 pr-8 text-xl md:text-2xl font-serif focus:outline-none focus:border-gold transition-colors text-beige placeholder:text-beige/10 disabled:opacity-50"
                  />
                </div>
+               {error && (
+                 <motion.p 
+                   initial={{ opacity: 0, y: -10 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   className="mt-2 text-xs text-red-500 font-mono uppercase tracking-widest text-center"
+                 >
+                   {error}
+                 </motion.p>
+               )}
             </div>
 
             <h3 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] mb-4 md:mb-6 text-beige/30 text-center">{t.donation.paymentPath}</h3>
@@ -119,123 +203,41 @@ export default function Donation() {
             </div>
 
             <div className="mb-8 md:mb-12">
-              <AnimatePresence mode="wait">
-                {method === 'upi' && (
-                  <motion.div
-                    key="upi"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-4"
+               {!user ? (
+                  <Link 
+                    to="/auth"
+                    className="w-full py-6 md:py-8 bg-gold text-maroon rounded-xl md:rounded-2xl text-base md:text-lg font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 group"
                   >
-                    <div className="flex flex-col gap-1 md:gap-2">
-                      <label className="text-[9px] md:text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.upiIdLabel}</label>
-                      <input 
-                        type="text" 
-                        disabled={isProcessing || isSuccess}
-                        placeholder="sankalp@upi"
-                        className="w-full bg-white/5 border border-gold/10 rounded-lg md:rounded-xl py-3 md:py-4 px-5 md:px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50 text-sm"
-                      />
-                    </div>
-                  </motion.div>
-                )}
-
-                {method === 'card' && (
-                  <motion.div
-                    key="card"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-4"
-                  >
-                    <div className="flex flex-col gap-1 md:gap-2">
-                       <label className="text-[9px] md:text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.cardNumberLabel}</label>
-                       <input 
-                         type="text" 
-                         disabled={isProcessing || isSuccess}
-                         placeholder="XXXX XXXX XXXX XXXX"
-                         className="w-full bg-white/5 border border-gold/10 rounded-lg md:rounded-xl py-3 md:py-4 px-5 md:px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50 text-sm"
-                       />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="flex flex-col gap-1 md:gap-2">
-                        <label className="text-[9px] md:text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.expiryLabel}</label>
-                        <input 
-                          type="text" 
-                          disabled={isProcessing || isSuccess}
-                          placeholder="MM/YY"
-                          className="w-full bg-white/5 border border-gold/10 rounded-lg md:rounded-xl py-3 md:py-4 px-5 md:px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50 text-sm"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1 md:gap-2">
-                        <label className="text-[9px] md:text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.cvvLabel}</label>
-                        <input 
-                          type="password" 
-                          disabled={isProcessing || isSuccess}
-                          placeholder="***"
-                          className="w-full bg-white/5 border border-gold/10 rounded-lg md:rounded-xl py-3 md:py-4 px-5 md:px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50 text-sm"
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
-                {method === 'net' && (
-                  <motion.div
-                    key="bank"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-4"
-                  >
-                    <div className="flex flex-col gap-1 md:gap-2">
-                       <label className="text-[9px] md:text-[10px] uppercase tracking-widest text-gold/40 ml-2">{t.donation.bankAccountLabel}</label>
-                       <input 
-                         type="text" 
-                         disabled={isProcessing || isSuccess}
-                         placeholder={language === 'HI' ? 'खाता संख्या' : 'Account Number'}
-                         className="w-full bg-white/5 border border-gold/10 rounded-lg md:rounded-xl py-3 md:py-4 px-5 md:px-6 focus:outline-none focus:border-gold transition-colors text-beige disabled:opacity-50 text-sm"
-                       />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    Login to {t.donation.process}
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                  </Link>
+               ) : (
+                 <button 
+                   onClick={handleDonation}
+                   disabled={isProcessing || isSuccess}
+                   className={`w-full py-6 md:py-8 bg-gradient-to-r from-maroon to-saffron text-beige rounded-xl md:rounded-2xl text-lg md:text-xl font-serif uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_40px_rgba(128,0,0,0.3)] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-4`}
+                 >
+                   {isProcessing ? (
+                     <div className="flex gap-1">
+                       <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                       <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                       <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
+                     </div>
+                   ) : isSuccess ? (
+                     <motion.div 
+                       initial={{ scale: 0 }} 
+                       animate={{ scale: 1 }} 
+                       className="flex items-center gap-2"
+                     >
+                       <ShieldCheck className="w-6 h-6" />
+                       {language === 'HI' ? 'सफल योगदान' : 'Seva Successful'}
+                     </motion.div>
+                   ) : (
+                     t.donation.process
+                   )}
+                 </button>
+               )}
             </div>
-
-            {!user ? (
-               <Link 
-                 to="/auth"
-                 className="w-full py-6 md:py-8 bg-gold text-maroon rounded-xl md:rounded-2xl text-base md:text-lg font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 group"
-               >
-                 Login to {t.donation.process}
-                 <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
-               </Link>
-            ) : (
-              <button 
-                onClick={handleDonation}
-                disabled={isProcessing || isSuccess}
-                className={`w-full py-6 md:py-8 bg-gradient-to-r from-maroon to-saffron text-beige rounded-xl md:rounded-2xl text-lg md:text-xl font-serif uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_40px_rgba(128,0,0,0.3)] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-4`}
-              >
-                {isProcessing ? (
-                  <div className="flex gap-1">
-                    <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
-                    <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
-                    <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-beige rounded-full" />
-                  </div>
-                ) : isSuccess ? (
-                  <motion.div 
-                    initial={{ scale: 0 }} 
-                    animate={{ scale: 1 }} 
-                    className="flex items-center gap-2"
-                  >
-                    <ShieldCheck className="w-6 h-6" />
-                    {language === 'HI' ? 'सफल योगदान' : 'Seva Successful'}
-                  </motion.div>
-                ) : (
-                  t.donation.process
-                )}
-              </button>
-            )}
             
             <p className="text-center mt-6 md:mt-8 text-[8px] md:text-[9px] text-beige/20 uppercase tracking-[0.3em] font-medium leading-relaxed">
               {t.donation.report}

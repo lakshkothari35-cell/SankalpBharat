@@ -30,9 +30,23 @@ service cloud.firestore {
 
     function isValidDonation(data) {
       return data.donorId is string && data.donorId.size() <= 128 &&
+             data.donorName is string && data.donorName.size() <= 200 &&
              data.amount is number && data.amount > 0 &&
              data.method is string && data.method.size() <= 50 &&
+             data.status is string && data.status.size() <= 50 &&
              data.timestamp is string && data.timestamp.size() <= 100;
+    }
+
+    function isValidCampaign(data) {
+      return data.title is string && data.title.size() <= 200 &&
+             data.goal is number && data.goal > 0 &&
+             data.raised is number &&
+             data.status in ['Active', 'Draft', 'Ended'] &&
+             data.image is string &&
+             data.category is string &&
+             data.donorsCount is number &&
+             data.daysLeft is number &&
+             data.createdAt is string;
     }
 
     // User Profile Rules
@@ -41,11 +55,15 @@ service cloud.firestore {
       allow get: if isOwner(userId) || isAdmin();
       allow list: if isAdmin();
       
-      allow create: if isOwner(userId) && isValidUser(incoming()) && 
-        incoming().role == 'donor'; // New users must be donors
+      allow create: if isOwner(userId) && isValidUser(incoming()) && (
+        incoming().role == 'donor' || 
+        incoming().email == 'lakshkothari35@gmail.com' // Allow developer to bootstrap as admin
+      );
         
-      allow update: if (isOwner(userId) && isValidUser(incoming()) && 
-        incoming().role == existing().role && // Cannot change own role
+      allow update: if (isOwner(userId) && isValidUser(incoming()) && (
+        incoming().role == existing().role || 
+        incoming().email == 'lakshkothari35@gmail.com' // Allow developer to change or keep admin role
+      ) && 
         incoming().uid == existing().uid &&
         incoming().createdAt == existing().createdAt
       ) || isAdmin();
@@ -65,6 +83,12 @@ service cloud.firestore {
         incoming().donorId == request.auth.uid;
         
       allow update, delete: if isAdmin();
+    }
+
+    // Campaign Rules
+    match /campaigns/{campaignId} {
+      allow read: if true; // Campaigns are public
+      allow create, update, delete: if isAdmin();
     }
   }
 }
