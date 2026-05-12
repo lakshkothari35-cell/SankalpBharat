@@ -18,13 +18,13 @@ export default function Volunteer() {
   };
 
   return (
-    <section id="volunteer" className="py-40 px-6 relative overflow-hidden">
+    <section id="volunteer" className="py-20 md:py-40 px-4 md:px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-        <span className="text-gold font-serif text-sm tracking-[0.4em] uppercase mb-6">Sahayata - Joining the Mission</span>
-        <h2 className="text-5xl md:text-8xl font-serif mb-12">
-          {t.volunteer.title} <span className="text-saffron italic">{t.volunteer.karmayogi}</span>.
+        <span className="text-gold font-serif text-[10px] md:text-sm tracking-[0.4em] uppercase mb-4 md:mb-6">Sahayata - Joining the Mission</span>
+        <h2 className="text-3xl md:text-8xl font-serif mb-8 md:mb-12 leading-tight">
+          {t.volunteer.title} <br className="md:hidden" /> <span className="text-saffron italic">{t.volunteer.karmayogi}</span>.
         </h2>
-        <p className="text-beige/40 text-lg font-medium leading-relaxed max-w-2xl mb-16">
+        <p className="text-beige/40 text-sm md:text-lg font-medium leading-relaxed max-w-2xl mb-12 md:mb-16">
           {t.volunteer.description}
         </p>
 

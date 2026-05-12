@@ -88,23 +88,23 @@ export default function Donation() {
   };
 
   return (
-    <section id="donation" className="py-20 md:py-32 px-4 md:px-6">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+    <section id="donation" className="py-16 md:py-32 px-4 md:px-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
         <div className="text-center lg:text-left">
-          <h2 className="text-4xl md:text-7xl font-serif tracking-tighter mb-6 md:mb-8 leading-[1.1] text-beige">
+          <h2 className="text-3xl md:text-7xl font-serif tracking-tighter mb-4 md:mb-8 leading-[1.1] text-beige">
             {t.donation.title} <br /> <span className="italic text-saffron">{t.donation.realChange}</span>.
           </h2>
-          <p className="text-base md:text-xl text-beige/50 mb-8 md:mb-12 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 font-serif">
+          <p className="text-sm md:text-xl text-beige/50 mb-6 md:mb-12 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 font-serif">
             {t.donation.description}
           </p>
           
           <div className="flex items-center justify-center lg:justify-start gap-4 text-gold">
-             <ShieldCheck className="w-5 h-5 md:w-6 md:h-6" />
-             <span className="text-[10px] md:text-sm font-mono tracking-widest uppercase font-black">{t.donation.secured}</span>
+             <ShieldCheck className="w-4 h-4 md:w-6 md:h-6" />
+             <span className="text-[8px] md:text-sm font-mono tracking-widest uppercase font-black">{t.donation.secured}</span>
           </div>
         </div>
 
-        <div className="p-5 md:p-12 bg-maroon/10 border border-gold/20 rounded-[32px] md:rounded-[40px] shadow-2xl overflow-hidden backdrop-blur-3xl relative min-h-[500px] flex flex-col justify-center">
+        <div className="p-6 md:p-12 bg-maroon/10 border border-gold/20 rounded-[28px] md:rounded-[40px] shadow-2xl overflow-hidden backdrop-blur-3xl relative min-h-[400px] md:min-h-[500px] flex flex-col justify-center">
           <div className="relative z-10">
             <h3 className="text-base md:text-xl font-serif uppercase tracking-widest mb-8 md:mb-10 text-gold text-center">{t.donation.choose}</h3>
             

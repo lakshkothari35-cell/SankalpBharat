@@ -66,11 +66,17 @@
 
 .hero-text {
   font-family: var(--font-serif);
-  font-size: clamp(3rem, 10vw, 9rem);
-  line-height: 0.95;
+  font-size: clamp(2.5rem, 10vw, 9rem);
+  line-height: 1;
   text-transform: uppercase;
   letter-spacing: -0.05em;
   font-weight: 700;
+}
+
+@layer utilities {
+  .mobile-touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
 }
 
 .text-glow {

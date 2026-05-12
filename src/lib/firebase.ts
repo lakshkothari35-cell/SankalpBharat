@@ -13,7 +13,7 @@ export const facebookProvider = new FacebookAuthProvider();
 export const appleProvider = new OAuthProvider('apple.com');
 
 // Test connection
-async function testConnection() {
+export async function testConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
   } catch (error) {
@@ -22,4 +22,4 @@ async function testConnection() {
     }
   }
 }
-testConnection();
+// testConnection(); removed from top level to avoid race conditions

@@ -51,14 +51,14 @@ export default function Causes() {
   ];
 
   return (
-    <section id="causes" className="py-32 px-6 max-w-7xl mx-auto relative overflow-hidden">
-      <div className="mb-24 text-center">
-        <span className="text-gold font-serif text-sm tracking-[0.4em] uppercase">{t.causes.pillars}</span>
-        <h2 className="text-5xl md:text-8xl font-serif mt-6">
+    <section id="causes" className="py-20 md:py-32 px-4 md:px-6 max-w-7xl mx-auto relative overflow-hidden">
+      <div className="mb-12 md:mb-24 text-center">
+        <span className="text-gold font-serif text-[10px] md:text-sm tracking-[0.4em] uppercase">{t.causes.pillars}</span>
+        <h2 className="text-3xl md:text-8xl font-serif mt-4 md:mt-6 leading-tight">
           {t.causes.empowering} <br /> <span className="text-transparent" style={{ WebkitTextStroke: '1px rgba(212,175,55,0.4)' }}>{t.causes.humanity}</span>.
         </h2>
-        <div className="w-24 h-px bg-gold/30 mx-auto mt-8 relative">
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-gold shadow-[0_0_10px_#D4AF37]" />
+        <div className="w-16 md:w-24 h-px bg-gold/30 mx-auto mt-6 md:mt-8 relative">
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 md:w-2 h-1.5 md:h-2 rounded-full bg-gold shadow-[0_0_10px_#D4AF37]" />
         </div>
       </div>
 

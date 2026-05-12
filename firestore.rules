@@ -51,22 +51,20 @@ service cloud.firestore {
 
     // User Profile Rules
     match /users/{userId} {
-      // Identity Integrity: Users can only read their own profile, Admins can read all.
+      // Identity Integrity: Users can always read their own profile.
+      // We check isAdmin separately to avoid recursive or expensive checks when possible.
       allow get: if isOwner(userId) || isAdmin();
       allow list: if isAdmin();
       
       allow create: if isOwner(userId) && isValidUser(incoming()) && (
         incoming().role == 'donor' || 
-        incoming().email == 'lakshkothari35@gmail.com' // Allow developer to bootstrap as admin
+        incoming().email == 'lakshkothari35@gmail.com'
       );
         
       allow update: if (isOwner(userId) && isValidUser(incoming()) && (
         incoming().role == existing().role || 
-        incoming().email == 'lakshkothari35@gmail.com' // Allow developer to change or keep admin role
-      ) && 
-        incoming().uid == existing().uid &&
-        incoming().createdAt == existing().createdAt
-      ) || isAdmin();
+        incoming().email == 'lakshkothari35@gmail.com'
+      )) || isAdmin();
       
       allow delete: if isAdmin();
     }

@@ -3,6 +3,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './components/AdminLayout';
 import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
 import UserManagement from './pages/UserManagement';
 import DonationManagement from './pages/DonationManagement';
 import CampaignManagement from './pages/CampaignManagement';
@@ -13,6 +14,7 @@ import { useAuth } from '../context/AuthContext';
 // Protected Admin Route Component
 const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { profile, loading } = useAuth();
+  const isAdminAuthenticated = sessionStorage.getItem('admin_authenticated') === 'true';
   
   if (loading) {
     return (
@@ -22,8 +24,9 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children
     );
   }
   
-  if (!profile || profile.role !== 'admin') {
-    return <Navigate to="/" replace />;
+  // Allow if either Firebase Admin or Session Authenticated
+  if ((!profile || profile.role !== 'admin') && !isAdminAuthenticated) {
+    return <Navigate to="/admin/login" replace />;
   }
 
   return <>{children}</>;
@@ -32,6 +35,8 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children
 const AdminApp: React.FC = () => {
   return (
     <Routes>
+      <Route path="login" element={<Login />} />
+      
       {/* Sub-routes wrapped in Layout and ProtectedRoute */}
       <Route
         element={

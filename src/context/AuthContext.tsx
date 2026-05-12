@@ -39,60 +39,75 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      
-      if (firebaseUser) {
-        const userPath = `users/${firebaseUser.uid}`;
-        const userDocRef = doc(db, 'users', firebaseUser.uid);
+    let unsubProfile: (() => void) | null = null;
+    let authUnsubscribe: (() => void) | null = null;
+
+    // Small delay to allow Firebase Auth state machine to stabilize
+    const timeoutId = setTimeout(() => {
+      authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        setUser(firebaseUser);
         
-        const unsubProfile = onSnapshot(userDocRef, (docSnap) => {
-          if (docSnap.exists()) {
-            const data = docSnap.data() as UserProfile;
-            
-            // Auto-upgrade developer to admin if they are currently a donor
-            if (firebaseUser.email === 'lakshkothari35@gmail.com' && data.role === 'donor') {
-              console.log('Upgrading developer to admin role...');
-              const updatedProfile = { ...data, role: 'admin' as UserRole };
-              setDoc(userDocRef, updatedProfile, { merge: true }).catch(err => {
-                console.error('Failed to upgrade role:', err);
-              });
-              setProfile(updatedProfile);
+        // Cleanup previous profile listener
+        if (unsubProfile) {
+          unsubProfile();
+          unsubProfile = null;
+        }
+
+        if (firebaseUser) {
+          const userPath = `users/${firebaseUser.uid}`;
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          
+          unsubProfile = onSnapshot(userDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+              const data = docSnap.data() as UserProfile;
+              
+              // Auto-upgrade developer to admin if they are currently a donor
+              if (firebaseUser.email === 'lakshkothari35@gmail.com' && data.role === 'donor') {
+                console.log('Upgrading developer to admin role...');
+                const updatedProfile = { ...data, role: 'admin' as UserRole };
+                setDoc(userDocRef, updatedProfile, { merge: true }).catch(err => {
+                  console.error('Failed to upgrade role:', err);
+                });
+                setProfile(updatedProfile);
+              } else {
+                setProfile(data);
+              }
+              setLoading(false);
             } else {
-              setProfile(data);
+              const newRole: UserRole = firebaseUser.email === 'lakshkothari35@gmail.com' ? 'admin' : 'donor';
+              
+              const newProfile: UserProfile = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email || '',
+                name: firebaseUser.displayName || 'Human Being',
+                role: newRole,
+                photoURL: firebaseUser.photoURL || '',
+                createdAt: new Date().toISOString()
+              };
+              
+              setDoc(userDocRef, newProfile).catch(err => {
+                 handleFirestoreError(err, OperationType.WRITE, userPath, firebaseUser);
+              });
+              
+              setProfile(newProfile);
+              setLoading(false);
             }
-            setLoading(false);
-          } else {
-            const newRole: UserRole = firebaseUser.email === 'lakshkothari35@gmail.com' ? 'admin' : 'donor';
-            
-            const newProfile: UserProfile = {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              name: firebaseUser.displayName || 'Human Being',
-              role: newRole,
-              photoURL: firebaseUser.photoURL || '',
-              createdAt: new Date().toISOString()
-            };
-            
-            setDoc(userDocRef, newProfile).catch(err => {
-               handleFirestoreError(err, OperationType.WRITE, userPath, auth);
-            });
-            
-            setProfile(newProfile);
-            setLoading(false);
-          }
-        }, (error) => {
-          handleFirestoreError(error, OperationType.GET, userPath, auth);
-        });
+          }, (error) => {
+            console.error('Profile snapshot error:', error);
+            handleFirestoreError(error, OperationType.GET, userPath, firebaseUser);
+          });
+        } else {
+          setProfile(null);
+          setLoading(false);
+        }
+      });
+    }, 100);
 
-        return () => unsubProfile();
-      } else {
-        setProfile(null);
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(timeoutId);
+      if (authUnsubscribe) authUnsubscribe();
+      if (unsubProfile) unsubProfile();
+    };
   }, []);
 
   const logout = async () => {

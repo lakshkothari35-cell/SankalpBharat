@@ -100,21 +100,21 @@ function PublicApp() {
           <Volunteer />
           
           {/* About Section - Timeline */}
-          <section id="about" className="py-10 md:py-40 px-6 max-w-7xl mx-auto relative">
+          <section id="about" className="py-20 md:py-40 px-4 md:px-6 max-w-7xl mx-auto relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20">
               <div>
                 <span className="text-gold font-serif text-[10px] md:text-sm tracking-[0.4em] uppercase">{language === 'HI' ? 'विरासत - हमारी विरासत' : 'Virasat - Our Legacy'}</span>
-                <h2 className="text-4xl md:text-8xl font-serif mb-8 md:mb-12 mt-4 md:mt-6">
+                <h2 className="text-3xl md:text-8xl font-serif mb-6 md:mb-12 mt-4 md:mt-6 leading-tight">
                   {language === 'HI' ? 'सेवा में' : 'Rooted in'} <br /><span className="text-saffron italic">{language === 'HI' ? 'निहित' : 'Seva'}</span>.
                 </h2>
-                <p className="text-beige/40 text-sm md:text-lg font-medium leading-relaxed max-w-lg">
+                <p className="text-beige/40 text-sm md:text-lg font-medium leading-relaxed max-w-lg mb-8">
                   {language === 'HI' 
                     ? 'एक दशक से अधिक समय से, हम केवल एक संगठन नहीं हैं; हम करुणा का एक आंदोलन हैं, जो वसुधैव कुटुंबकम के भारतीय आदर्श को आगे बढ़ा रहे हैं।'
                     : 'For over a decade, we have been more than an organization; we are a movement of compassion, carrying forward the Indian ideal of Vasudhaiva Kutumbakam.'}
                 </p>
               </div>
               
-              <div className="space-y-10 md:space-y-16 border-l border-gold/10 pl-6 md:pl-12">
+              <div className="space-y-12 md:space-y-16 border-l border-gold/10 pl-6 md:pl-12">
                 {[
                   { year: '2015', text: language === 'HI' ? 'एक जमीनी स्तर के सामुदायिक सेवा प्रोजेक्ट के रूप में शुरू हुआ।' : 'Initiated as a grassroots community service project.' },
                   { year: '2018', text: language === 'HI' ? 'ग्रामीण उत्थान के लिए एक अखिल भारतीय फाउंडेशन में विकसित हुआ।' : 'Evolved into a Pan-India foundation for rural upliftment.' },
@@ -137,7 +137,7 @@ function PublicApp() {
  
           {/* Impact Stats */}
           <section className="py-20 md:py-32 mandala-pattern border-y border-gold/5 bg-maroon/[0.02]">
-            <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 text-center">
               {[
                 { label: language === 'HI' ? 'प्रभावित आत्माएं' : 'Souls Impacted', value: '1.4M+' },
                 { label: language === 'HI' ? 'प्राचीन गाँव' : 'Ancient Villages', value: '1200+' },
@@ -148,7 +148,7 @@ function PublicApp() {
                   <div className="text-3xl md:text-6xl font-serif text-gold group-hover:scale-110 transition-transform duration-500">
                     {stat.value}
                   </div>
-                  <div className="text-[8px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] text-beige/30 mt-3 md:mt-4 leading-loose">{stat.label}</div>
+                  <div className="text-[7px] md:text-[10px] uppercase tracking-[0.15em] md:tracking-[0.3em] text-beige/30 mt-2 md:mt-4 leading-loose">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -184,11 +184,7 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/admin/*" element={
-          <ProtectedRoute role="admin">
-            <AdminApp />
-          </ProtectedRoute>
-        } />
+        <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard/donor" element={<ProtectedRoute role="donor"><Dashboard /></ProtectedRoute>} />
         <Route path="/dashboard/volunteer" element={<ProtectedRoute role="volunteer"><Dashboard /></ProtectedRoute>} />
